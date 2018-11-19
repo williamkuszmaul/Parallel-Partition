@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2018.2.24)  19 NOV 2018 16:01
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2018.2.24)  19 NOV 2018 16:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -979,7 +979,7 @@ LaTeX Info: Redefining \addtolength on input line 81.
 LaTeX Warning: Unused global option(s):
     [sigplan].
 
-No file writeup.aux.
+(./writeup.aux)
 \openout1 = `writeup.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 146.
@@ -997,7 +997,7 @@ LaTeX Font Info:    ... okay on input line 146.
 LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 146.
 LaTeX Font Info:    ... okay on input line 146.
 LaTeX Font Info:    Try loading font information for U+msa on input line 146.
-(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
+ (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
 LaTeX Font Info:    Try loading font information for U+msb on input line 146.
@@ -1061,6 +1061,8 @@ Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 LaTeX Info: Redefining \ref on input line 146.
 LaTeX Info: Redefining \pageref on input line 146.
 LaTeX Info: Redefining \nameref on input line 146.
+
+(./writeup.out) (./writeup.out)
 \@outlinefile=\write5
 \openout5 = `writeup.out'.
 
@@ -1252,21 +1254,12 @@ Overfull \hbox (11.56737pt too wide) in paragraph at lines 500--504
 \OT1/cmr/m/n/10 ing exclusive-read-write vari-ables that per-forms parallel-
  []
 
-
-LaTeX Warning: Reference `thminplace' on page 4 undefined on input line 506.
-
-
-LaTeX Warning: Reference `secalg' on page 4 undefined on input line 572.
-
 [4]
 
 LaTeX Warning: Citation `Blelloch96' on page 5 undefined on input line 584.
 
 
 LaTeX Warning: Citation `AcarBl16' on page 5 undefined on input line 584.
-
-
-LaTeX Warning: Reference `secprelim' on page 5 undefined on input line 585.
 
 
 Overfull \hbox (2.1989pt too wide) in paragraph at lines 583--587
@@ -1278,13 +1271,6 @@ Overfull \hbox (2.1989pt too wide) in paragraph at lines 583--587
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
-
-LaTeX Warning: Reference `secalg' on page 5 undefined on input line 591.
-
-
-LaTeX Warning: Reference `secalg' on page 5 undefined on input line 608.
-
-
 Overfull \hbox (2.73772pt too wide) in paragraph at lines 587--609
 []\OT1/cmr/m/it/10 The Medium-Space Par-al-lel Im-ple-men-ta-tion: \OT1/cmr/m/n
 /10 Start-
@@ -1294,28 +1280,9 @@ Overfull \hbox (2.73772pt too wide) in paragraph at lines 587--609
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [5]
-
-LaTeX Warning: Reference `secalg' on page 6 undefined on input line 612.
-
-
 Overfull \hbox (7.7948pt too wide) in paragraph at lines 625--633
 \OT1/cmr/bx/n/10 An Ad-di-tional Op-ti-miza-tion for The High-Space
  []
-
-
-LaTeX Warning: Reference `tablecilk' on page 6 undefined on input line 635.
-
-
-LaTeX Warning: Reference `tablecilk2' on page 6 undefined on input line 642.
-
-
-LaTeX Warning: Reference `tableserial' on page 6 undefined on input line 646.
-
-
-LaTeX Warning: Reference `tablecilk' on page 6 undefined on input line 651.
-
-
-LaTeX Warning: Reference `tablecilk2' on page 6 undefined on input line 651.
 
 
 Overfull \hbox (6.28023pt too wide) in paragraph at lines 663--668
@@ -1379,27 +1346,18 @@ Package atveryend Info: Empty hook `AfterLastShipout' on input line 742.
  (./writeup.aux)
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 742.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 742.
+Package rerunfilecheck Info: File `writeup.out' has not changed.
+(rerunfilecheck)             Checksum: 6B2F07A73B327E665AB31849EFE0E238;294.
 
-
-Package rerunfilecheck Warning: File `writeup.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `writeup.out':
-(rerunfilecheck)             Before: <no file>
-(rerunfilecheck)             After:  6B2F07A73B327E665AB31849EFE0E238;294.
 
 LaTeX Warning: There were undefined references.
 
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
  ) 
 Here is how much of TeX's memory you used:
- 32644 strings out of 494946
- 761987 string characters out of 6180981
- 1005371 words of memory out of 5000000
- 35217 multiletter control sequences out of 15000+600000
+ 32656 strings out of 494946
+ 762116 string characters out of 6180981
+ 1007298 words of memory out of 5000000
+ 35223 multiletter control sequences out of 15000+600000
  13434 words of font info for 53 fonts, out of 8000000 for 9000
  175 hyphenation exceptions out of 8191
  58i,21n,103p,842b,2663s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1422,10 +1380,10 @@ dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fo
 nts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texlive/texmf-dist/fonts/ty
 pe1/public/amsfonts/cm/cmti8.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
 lic/amsfonts/symbols/msbm10.pfb>
-Output written on writeup.pdf (7 pages, 264690 bytes).
+Output written on writeup.pdf (7 pages, 265562 bytes).
 PDF statistics:
- 146 PDF objects out of 1000 (max. 8388607)
- 115 compressed objects within 2 object streams
+ 173 PDF objects out of 1000 (max. 8388607)
+ 142 compressed objects within 2 object streams
  21 named destinations out of 1000 (max. 500000)
- 13 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 53 words of extra memory for PDF output out of 10000 (max. 10000000)
 
