@@ -38,6 +38,7 @@ red,densely dashed,every mark/.append style={solid,fill=red!80!black},mark=diamo
 %\setlength{\textheight}{9in}
 %\usepackage{refcheck}
 %\usepackage{pslatex} % use times roman
+\newcommand{\github}{\textit{github.com/williamkuszmaul/Parallel-Partition}}
 \newcommand{\defn}[1]       {{\textit{\textbf{\boldmath #1}}}}
 \renewcommand{\paragraph}[1]{\vspace{0.09in}\noindent{\bf \boldmath #1.}} 
 \usepackage{amsmath}
@@ -234,10 +235,10 @@ considerations. As an immediate consequence, we also get a simple
 in-place quicksort algorithm with work $O(n \log n)$ and span
 $O(\log^2 \log \log n)$.
 
-The simplicity of our algorithmic techniques makes them condusive to
+The simplicity of our algorithmic techniques makes them conducive to
 practical implementations. We implement and optimize an (almost)
 in-place implementation. Because the in-place algorithm eliminates the
-use of large auxilary arrays, the algorithm is able to achieve a
+use of large auxiliary arrays, the algorithm is able to achieve a
 significant reduction in cache misses over its out-of-place
 counterpart. In addition to significantly reducing the memory
 overhead, the space-efficient algorithm is able to achieve a modest
@@ -251,7 +252,7 @@ the paper, and by presenting background on parallel partition.
 
 \paragraph{Workflow Model} We consider a language-based model of parallelism in which algorithms may achieve parallelism
 through the use of \defn{parallel-for-loops}, though our algorithm
-also works in the less restrictive EREW PRAM model
+also works in the less restrictive PRAM model
 \cite{Blelloch96,AcarBl16}.  A parallel-for-loop is given a range $R
 \in \mathbb{N}$, a constant number of arguments $\arg_1, \arg_2,
 \ldots, \arg_c$, and a body of code. For each $i \in \{1, \ldots,
@@ -333,7 +334,7 @@ parallel partition.
 
 Both phases can be implemented with $O(n)$ work and $O(\log n)$
 span. Like its serial out-of-place counterpart, the algorithm is
-stable but not in place. The algorithm uses two auxilary arrays of
+stable but not in place. The algorithm uses two auxiliary arrays of
 size $n$. Kiu, Knowles, and Davis \cite{LiuKn05} were able to reduce
 the extra space consumption to $n + p$ under the assumption that the
 number of processors $p$ is hard-coded; their algorithm breaks the
@@ -592,15 +593,15 @@ partition algorithm.
   is initialized to be of size $n / 64$, with each component equal to
   a sum of 64 elements, and then a parallel prefix sum is computed on
   the array. Rather than implicitly encoding the elements of $B$ in
-  $A$, we use an auxilary array of size $n / 64$ to explicitly store
+  $A$, we use an auxiliary array of size $n / 64$ to explicitly store
   the prefix sums.\footnote{We suspect that an implementation in which
     the values are implicitly stored could also be made fast. In
     particular, the value 64 can be increased to compensate for
     whatever constant overhead is induced by the implicit storage of
-    values. Nonetheless, the auxilary array is already quite small
+    values. Nonetheless, the auxiliary array is already quite small
     relative to the input and is more practical to implement.} The algorithm
   has a space overhead of $\frac{n}{32} + n$ eight-byte
-  words.\footnote{In addition to the auxilary array of size $n / 64$,
+  words.\footnote{In addition to the auxiliary array of size $n / 64$,
     we use a series of smaller arrays of sizes $n / 128, n / 256,
     \ldots$ in the recursive computation of the prefix sum. The
     alternative of performing the parallel-prefix sum in place, as in
@@ -640,7 +641,7 @@ with the low-space implementation performing almost twice as well as
 the high-space implementation on eight threads. Similar speedups on
 eight threads are achieved on smaller inputs; see Figure
 \ref{tablecilk2}, which graphs speedup for input sizes starting at
-$2^{23}$, the smallest size for which consistant time measurements can
+$2^{23}$, the smallest size for which consistent time measurements can
 be taken without averaging over many trials.
 
 Figure \ref{tableserial} compares the performances of the
@@ -668,7 +669,7 @@ cache misses, respectively.
 
 To a first approximation, the number of cache misses by each algorithm
 is proportional to the number of times that the algorithm scans
-through a large array. By eliminating the use of large auxilary
+through a large array. By eliminating the use of large auxiliary
 arrays, the low-space implementation has the opportunity to achieve a
 reduction in the number of such scans. Additionally, the low-space
 algorithm allows for steps from adjacent phases of the algorithm to
@@ -677,7 +678,7 @@ of the number of predecessors and the top level of the Preprocessing
 Phase can be performed together in a single pass on the input
 array. Similarly, the later levels of the Preprocessing Phase (which
 focus on only one half of the input array) can be combined with the
-construction of (one half of) the auxilary array used in the Parallel
+construction of (one half of) the auxiliary array used in the Parallel
 Prefix Sum Phase, saving another half of a pass.
 
 \paragraph{Machine and Implementation Details}
@@ -700,7 +701,7 @@ within the recursion; to amortize the cost of Cilk thread spawns, the
 ad-hoc parallel-for-loop reverts to a serial computation when the
 subarray size becomes 256 or smaller.
 
-Our implementations are available at ??.
+Our implementations are available at \\ \github.
 
 \section{Conclusion and Open Questions}
 
@@ -711,28 +712,21 @@ practical importance. Until now, the only space-efficient algorithms
 for parallel partition have relied extensively on concurrency
 mechanisms or atomic operations. In this paper, we have shown that,
 somewhat surprisingly, there exists a simple variant on the classic
-parallel algorithm that completely eliminates the use of auxilary
+parallel algorithm that completely eliminates the use of auxiliary
 memory, while still using only exclusive read/write shared
 variables. Moreover, our implementation of (a variant of) the
 algorithm is able to exploit the algorithm's superior cache-behavior
 in order to obtain practical speedups over its out-of-place
 counterpart.
 
-We suspect that even the implicit storage of values in blocks could be
-made practical in actual implementations (though in practice it is
-likely simpler to simply use a small auxiliary array of size $O(n /
-\log n$)). In particular, by setting $b$ to be a constant factor
-larger, one can reduce the number of reads and writes of values $v_i$
-by the same constant factor, making the fraction of the time spent by
-the algorithm on such reads and writes an arbitrarily small constant.
-
-Our work also prompts several theoretical questions. Can fast space-efficient
-algorithms with polylogarithmic span be found for other classic
-problems such as randomly permuting an array \cite{Anderson90,
-  AlonsoSc96, ShunGu15}, and integer sorting \cite{Rajasekaran92,
-  HanHe12, AlbersHa97, Han01, GerbessiotisSi04}? Such algorithms are of both theoretical
-and practical interest, and might be able to utilize some of the
-techniques introduced in this paper.
+Our work prompts several theoretical questions. Can fast
+space-efficient algorithms with polylogarithmic span be found for
+other classic problems such as randomly permuting an array
+\cite{Anderson90, AlonsoSc96, ShunGu15}, and integer sorting
+\cite{Rajasekaran92, HanHe12, AlbersHa97, Han01, GerbessiotisSi04}?
+Such algorithms are of both theoretical and practical interest, and
+might be able to utilize some of the techniques introduced in this
+paper.
 
 \paragraph{Acknowledgments} The author would like to thank Bradley C. Kuszmaul for several suggestions that helped simplify both the algorithm and its exposition. The author would also like to thank Reza Zadeh for encouragement and advice.
 
