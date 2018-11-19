@@ -1,0 +1,26 @@
+To use cachegrind, run:
+valgrind --tool=callgrind --cache-sim=yes ./main
+callgrind_annotate --inclusive=yes callgrind.out.???
+(Here ??? should be replaced with the appropriate file id)
+
+This will give for each function the total number of instructions run
+within that function and functions that it called, as well as the
+numbers of different types of cache misses.
+
+The three functions we care about are partition, in_place_partition,
+and small_prefix_partition. So the three lines i nthe cachegrind
+output that we care about are something like this:
+
+   897,079,763   163,256,297   112,711,992    24 25,534,173 12,898,531    24 25,338,043 12,799,618  ???:partition(long*, unsigned long, long) [/home/williamkuszmaul/Dropbox/sortpaper/main]
+   870,913,874   141,033,168    57,939,096    91 17,181,784    268,132    90 16,862,568    197,974  ???:in_place_partition(long*, unsigned long, long) [/home/williamkuszmaul/Dropbox/sortpaper/main]
+   593,297,176    79,017,955    45,321,102    42 12,898,434  8,686,605    38 12,755,129  8,605,485  ???:small_prefix_partition(long*, unsigned long, long) [/home/williamkuszmaul/Dropbox/sortpaper/main]
+
+The first column is the number of instructions run within each
+function (including in its children functions). The last two columns
+are the number of write and read cache misses in the highest-level
+cache. Thus for this run of the program, we have:
+
+Total cache misses:
+low-space alg: 16,862,568 + 197,974 = 17.1 million
+medium-space alg: 12,755,129 + 8,605,485 = 21.4 million
+high-space alg: 25,338,043 + 12,799,618 = 38.1 million
