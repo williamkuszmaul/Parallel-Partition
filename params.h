@@ -13,17 +13,17 @@
 #define PARAMS_H
 
 // NUM_TRIALS is the number of trials tests are averaged over
-#define NUM_TRIALS 1
+#define NUM_TRIALS 5
 // BLOCK_SIZE is the value that is used as log n when performing optimizations on parallel prefix sum
-// Must be a power of two
+// Must be a power of two. Interestingly, reducing this doesn't change CILK's measured span.
 #define BLOCK_SIZE 64
 // MAX_INPUT_SIZE governs the size of the maximum array we will test on
 #define MAX_INPUT_SIZE (1 << 30)
 // NUM_THREADS_DEFAULT should be set to the number of cores on the machine we're running on
-#define NUM_THREADS_DEFAULT 8
+#define NUM_THREADS_DEFAULT 18
 // Exactly one of USE_CILK and RUN_SERIAL should be commented.
-//#define USE_CILK
-#define RUN_SERIAL
+#define USE_CILK
+//#define RUN_SERIAL
 
 
 #ifdef USE_CILK

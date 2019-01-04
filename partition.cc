@@ -16,17 +16,18 @@
 #include <bits/stdc++.h> 
 #include <sys/time.h>
 #include <cilk/cilk.h>
+#include <cilk/cilk_api.h>
 #include <string>
-
+#include "libc_partition.h"
 
 using namespace std;
 
 
-
 /*
- *  A simple implementation of the serial partitioning algorithm.
+ *  A simple implementation of the serial partitioning
+ *  algorithm. Returns number of elts <= pivot.
  */
-void serial_partition(int64_t *array, uint64_t n, int64_t pivot) {
+int64_t serial_partition(int64_t *array, uint64_t n, int64_t pivot) {
   int64_t swap_index = n - 1;
   while (array[swap_index] > pivot) swap_index--;
   for (int64_t i = 0; i <= swap_index; i++) {
@@ -38,27 +39,8 @@ void serial_partition(int64_t *array, uint64_t n, int64_t pivot) {
       while (array[swap_index] > pivot) swap_index--;
     }
   }
+  return swap_index + 1;
 }
-
-/*
- *  A simple alternative implementation of the serial partitioning
- *  with a slightly different control flow. Slower than serial_partition.
- */
-void serial_partition2(int64_t *array, uint64_t n, int64_t pivot) {
-  int64_t bottom = 0;
-  int64_t top = n - 1;
-  for (int i = 0; i < n; i++) {
-    bottom++;
-    if (array[bottom - 1] > pivot) {
-      int64_t tmp = array[bottom - 1];
-      array[bottom - 1] = array[top];
-      array[top] = tmp;
-      top--;
-      bottom--;
-    }
-  }
-}
-
 
 /*
  * Replaces array with a prefix sum of itself. Implements parallel
@@ -69,11 +51,13 @@ void serial_partition2(int64_t *array, uint64_t n, int64_t pivot) {
 void prefix_sum_unoptimized_cache_friendly(int64_t *array, uint64_t n) {
   if (n <= 1) return;
   int64_t *small_array = (int64_t*)malloc(sizeof(int64_t) * n / 2);
+//#pragma grainsize = ((n / 2) / (8 * __cilkrts_get_nworkers()))
   parallel_for (int64_t i = 0; i < n / 2; i++) {
     small_array[i] = array[2 * i] + array[2 * i + 1];
   }
   prefix_sum_unoptimized_cache_friendly(small_array, n / 2);
   array[1] = array[1] + array[0];
+//#pragma grainsize = (n / 2) / (8 * __cilkrts_get_nworkers())
   parallel_for (int64_t i = 1; i < n / 2; i++) {
     array[2 * i] = small_array[i - 1] + array[2 * i];
     array[2 * i + 1] = small_array[i];
@@ -91,6 +75,7 @@ void prefix_sum_unoptimized_cache_friendly(int64_t *array, uint64_t n) {
  */
 void prefix_sum_optimized_cache_friendly(int64_t *array, uint64_t n) {
   int64_t *small_array = (int64_t*)malloc(sizeof(int64_t) * n / BLOCK_SIZE);
+//#pragma grainsize = (n / BLOCK_SIZE) / (8 * __cilkrts_get_nworkers())
   parallel_for (int64_t i = 0; i < n / BLOCK_SIZE; i++) {
     int64_t sum = 0;
     for (int64_t j = i * BLOCK_SIZE; j < i * BLOCK_SIZE + BLOCK_SIZE; j++) {
@@ -99,7 +84,7 @@ void prefix_sum_optimized_cache_friendly(int64_t *array, uint64_t n) {
     small_array[i] = sum;
   }
   prefix_sum_unoptimized_cache_friendly(small_array, n / BLOCK_SIZE);
-  
+//#pragma grainsize = (n / BLOCK_SIZE) / (8 * __cilkrts_get_nworkers())
   parallel_for (int64_t i = 0; i < n / BLOCK_SIZE; i++) {
     int64_t prefix_sum = 0;
     if (i > 0) prefix_sum = small_array[i - 1];
@@ -110,7 +95,7 @@ void prefix_sum_optimized_cache_friendly(int64_t *array, uint64_t n) {
   }
   // This is to handle the case that n is not a multiple of block-size
   int64_t prefix_sum = small_array[n / BLOCK_SIZE - 1];
-  for (int j = (n / BLOCK_SIZE) * BLOCK_SIZE; j < n; j++) {
+  for (int64_t j = (n / BLOCK_SIZE) * BLOCK_SIZE; j < n; j++) {
     prefix_sum += array[j];
     array[j] = prefix_sum;
   }
@@ -132,13 +117,13 @@ void prefix_sum_unoptimized(int64_t *array, uint64_t n) {
   assert((n & (n - 1)) == 0); // Assert n is a pwer of two
   int64_t jump;
   for (jump = 2; jump <= n; jump *= 2) {
-    
+//#pragma grainsize = (n / jump) / (8 * __cilkrts_get_nworkers())
     parallel_for (int64_t i = n; i >= jump; i -= jump) {
       array[i - 1] += array[i - jump / 2 - 1];
     }
   }
   for (; jump >= 2; jump /= 2) {
-    
+//#pragma grainsize = (n / jump) / (8 * __cilkrts_get_nworkers()) 
     parallel_for (int64_t i = jump / 2 + jump; i <= n; i+= jump) {
       array[i - 1] = array[i - jump / 2 - 1] + array[i - 1];
     }
@@ -164,7 +149,7 @@ void prefix_sum_optimized(int64_t *array, uint64_t n) {
     return;
   }
   int64_t jump;
-  
+//#pragma grainsize = (n / BLOCK_SIZE) / (8 * __cilkrts_get_nworkers())
   parallel_for (int64_t i = 0; i < n / BLOCK_SIZE; i++) {
     int64_t sum = 0;
     for (int64_t j = i * BLOCK_SIZE; j < i * BLOCK_SIZE + BLOCK_SIZE; j++) {
@@ -173,18 +158,18 @@ void prefix_sum_optimized(int64_t *array, uint64_t n) {
     }
   }
   for (jump = BLOCK_SIZE * 2; jump <= n; jump *= 2) {
-    
+//#pragma grainsize = (n / jump) / (8 * __cilkrts_get_nworkers())
     parallel_for (int64_t i = n; i >= jump; i -= jump) {
       array[i - 1] += array[i - jump / 2 - 1];
     }
   }
   for (; jump >= BLOCK_SIZE * 2; jump /= 2) {
-    
+//#pragma grainsize = (n / jump) / (8 * __cilkrts_get_nworkers())    
     parallel_for (int64_t i = jump / 2 + jump; i <= n; i+= jump) {
       array[i - 1] = array[i - jump / 2 - 1] + array[i - 1];
     }
   }
-  
+//#pragma grainsize = (n / BLOCK_SIZE) / (8 * __cilkrts_get_nworkers())
   parallel_for (int64_t i = 1; i < n / BLOCK_SIZE; i++) {
     for (int64_t j = i * BLOCK_SIZE; j < i * BLOCK_SIZE + BLOCK_SIZE - 1; j++) {
       array[j] += array[i * BLOCK_SIZE - 1];
@@ -198,13 +183,14 @@ void prefix_sum_optimized(int64_t *array, uint64_t n) {
  * A simple test for prefix_sum.
  */
 void test_prefix_sum() {
+  if (BLOCK_SIZE >= 1411) return; // For this case, the folowing test doesn't work
   int64_t array[1411];
-  for (int i = 0; i < 1411; i++) array[i] = 1;
+  for (int64_t i = 0; i < 1411; i++) array[i] = 1;
   prefix_sum_optimized(array, 1411);
   for (int64_t i = 0; i < 1411; i++) assert(array[i] == i + 1);
 
   int64_t array2[1411];
-  for (int i = 0; i < 1411; i++) array2[i] = 1;
+  for (int64_t i = 0; i < 1411; i++) array2[i] = 1;
   prefix_sum_optimized(array2, 1411);
   for (int64_t i = 0; i < 1411; i++) assert(array2[i] == i + 1);
 }
@@ -215,14 +201,14 @@ void test_prefix_sum() {
  */
 void partition(int64_t *array, uint64_t n, int64_t pivot) {
   int64_t *prefixes = (int64_t*) malloc(sizeof(int64_t) * n);
-  
+//#pragma grainsize = (n) / (8 * __cilkrts_get_nworkers())
   parallel_for (int64_t i = 0; i < n; i++) {
     prefixes[i] = (array[i] <= pivot);
   }
   prefix_sum_optimized(prefixes, n);
   int64_t *output_tmp = (int64_t*) malloc(sizeof(int64_t) * n);
   int64_t num_preds = prefixes[n - 1];
-  
+//#pragma grainsize = (n) / (8 * __cilkrts_get_nworkers())  
   parallel_for (int64_t i = 0; i < n; i++) {
     if (array[i] <= pivot) {
       output_tmp[prefixes[i] - 1] = array[i];
@@ -230,7 +216,7 @@ void partition(int64_t *array, uint64_t n, int64_t pivot) {
       output_tmp[num_preds + (i - prefixes[i])] = array[i]; 
     }
   }
-  
+//#pragma grainsize = (n) / (8 * __cilkrts_get_nworkers())
   parallel_for (int64_t i = 0; i < n; i++) {
     array[i] = output_tmp[i];
   }
@@ -256,7 +242,7 @@ void in_place_reorder(int64_t* array, int64_t* prefixes, uint64_t n, int64_t piv
   int64_t m = (n * 3 / 4 + BLOCK_SIZE) & (~(BLOCK_SIZE - 1));
   in_place_reorder(array, prefixes, m, pivot);
 
-  
+//#pragma grainsize = (n / BLOCK_SIZE) / (8 * __cilkrts_get_nworkers())
   parallel_for (int64_t j = m / BLOCK_SIZE; j < n / BLOCK_SIZE; j++) {
     int64_t new_pos = prefixes[j - 1];
     for (int64_t i = j * BLOCK_SIZE; i < j * BLOCK_SIZE + BLOCK_SIZE; i++) {
@@ -270,7 +256,7 @@ void in_place_reorder(int64_t* array, int64_t* prefixes, uint64_t n, int64_t piv
   }
   // Now we handle case that n is not a multiple of BLOCK_SIZE, though
   // this will only happen once at the top level of recursion.
-  int j = n / BLOCK_SIZE;
+  int64_t j = n / BLOCK_SIZE;
   int64_t new_pos = prefixes[j - 1];
   for (int64_t i = j * BLOCK_SIZE; i < n; i++) {
     if (array[i] <= pivot) {
@@ -308,7 +294,7 @@ void backward_in_place_reorder(int64_t* array, int64_t* prefixes, uint64_t n, in
   int64_t offset = n - num_all_successors;
 
   // We loop through the blocks in parallel:
-
+//#pragma grainsize = (jmax) / (8 * __cilkrts_get_nworkers())
   parallel_for (int64_t j = 0;  j < jmax; j++) {
     // Within each block we perform the appropriate swaps
     // new_pos is the position that the first successor in the block will belong in
@@ -319,12 +305,12 @@ void backward_in_place_reorder(int64_t* array, int64_t* prefixes, uint64_t n, in
         array[i] = array[new_pos];
         array[new_pos] = tmp;
         new_pos++;
-      }
+      } 
     }
   }
 
   // Now we handle case that n is not a multiple of BLOCK_SIZE.
-  int j = (n - m - 1) / BLOCK_SIZE;
+  int64_t j = (n - m - 1) / BLOCK_SIZE;
   int64_t new_pos =  offset + prefixes[j - 1];
   for (int64_t i = j * BLOCK_SIZE; i < n - m; i++) {
     if (array[i] > pivot) {
@@ -344,7 +330,7 @@ void backward_in_place_reorder(int64_t* array, int64_t* prefixes, uint64_t n, in
  */
 void small_prefix_partition(int64_t *array, uint64_t n, int64_t pivot) {
   int64_t *prefixes = (int64_t*) malloc(sizeof(int64_t) * n / BLOCK_SIZE);
-  
+//#pragma grainsize = (n / BLOCK_SIZE) / (8 * __cilkrts_get_nworkers())
   parallel_for (int64_t i = 0; i < n / BLOCK_SIZE; i++) {
     int64_t sum = 0;
     for (int64_t j = i * BLOCK_SIZE; j < i * BLOCK_SIZE + BLOCK_SIZE; j++) {
@@ -358,8 +344,8 @@ void small_prefix_partition(int64_t *array, uint64_t n, int64_t pivot) {
   prefix_sum_unoptimized(prefixes, n / BLOCK_SIZE);
   int64_t *output_tmp = (int64_t*) malloc(sizeof(int64_t) * n);
   int64_t num_preds = prefixes[n / BLOCK_SIZE - 1];
-  for (int i = (n / BLOCK_SIZE) * BLOCK_SIZE; i < n; i++) num_preds += (array[i] <= pivot);
-  
+  for (int64_t i = (n / BLOCK_SIZE) * BLOCK_SIZE; i < n; i++) num_preds += (array[i] <= pivot);
+//#pragma grainsize = (n / BLOCK_SIZE) / (8 * __cilkrts_get_nworkers())
   parallel_for (int64_t i = 0; i < n / BLOCK_SIZE; i++) {
     int64_t prefix_sum = 0;
     if (i > 0) prefix_sum = prefixes[i - 1];
@@ -376,7 +362,7 @@ void small_prefix_partition(int64_t *array, uint64_t n, int64_t pivot) {
   
   // Now we have to handle case where n is not a multiple of BLOCK_SIZE
   if (true) { // This is just so that I can make i a local variable
-    int i = n / BLOCK_SIZE;
+    int64_t i = n / BLOCK_SIZE;
     int64_t prefix_sum = 0;
     prefix_sum = prefixes[i - 1];
     for (int64_t j = i * BLOCK_SIZE; j < n; j++) {
@@ -389,7 +375,7 @@ void small_prefix_partition(int64_t *array, uint64_t n, int64_t pivot) {
     }
   }
   
-  
+//#pragma grainsize = (n) / (8 * __cilkrts_get_nworkers())
   parallel_for (int64_t i = 0; i < n; i++) {
     array[i] = output_tmp[i];
   }
@@ -433,6 +419,7 @@ void finish_backward_in_place_partition(int64_t *array, uint64_t n, int64_t pivo
       }
     }
     // Now we do the main part of the loop:
+//#pragma grainsize = (m / (2 * BLOCK_SIZE)) / (8 * __cilkrts_get_nworkers())
     parallel_for (int64_t j = shift; j < m / 2; j += BLOCK_SIZE) {
       int64_t sum = 0;
       // Now we iterate through a block of size BLOCK_SIZE
@@ -453,7 +440,7 @@ void finish_backward_in_place_partition(int64_t *array, uint64_t n, int64_t pivo
   // Now the prefix sum step. The second half of the prefixes array is
   // already filled in, which lets us save a lot of potential cache
   // misses here.
-  
+//#pragma grainsize = (n / (2 * BLOCK_SIZE)) / (8 * __cilkrts_get_nworkers())
   parallel_for (int64_t i = 0; i < n / (2 * BLOCK_SIZE); i++) {
     int64_t sum = 0;
     for (int64_t j = i * BLOCK_SIZE; j < i * BLOCK_SIZE + BLOCK_SIZE; j++) {
@@ -485,8 +472,9 @@ void finish_backward_in_place_partition(int64_t *array, uint64_t n, int64_t pivo
  *  preprocessing phase for in-place algorithm.
  */ 
 int64_t preprocessing_run(int64_t *array, uint64_t bottom, uint64_t top, uint64_t n, int64_t pivot) {
-  // To offset cost of cilk spawns, we convert to a serial for loop at size 256 or less.
-  if (top - bottom <= 256) {
+  // To offset cost of cilk spawns, we convert to a serial for loop at
+  // the same granularity as CILK uses by default in for-loops.
+  if (top - bottom <= 4096) {
     int64_t num_pred = 0;
     for (int64_t i = bottom; i < top; i++) {
       int64_t pos2 = (n + 1) / 2 + i;
@@ -513,10 +501,10 @@ int64_t preprocessing_run(int64_t *array, uint64_t bottom, uint64_t top, uint64_
 /*
  * Partitions array so that elements <= pivot appear before other
  * elts. Uses algorithmic techniques to reduce memory footprint
- * (though not all the way in place).
+ * (though not all the way in place). Returns number of elts <= pivot.
  */
-void in_place_partition(int64_t *array, uint64_t n, int64_t pivot) {
-  if (n <= BLOCK_SIZE * 2) serial_partition(array, n, pivot);
+uint64_t in_place_partition(int64_t *array, uint64_t n, int64_t pivot) {
+  if (n <= BLOCK_SIZE * 2) return serial_partition(array, n, pivot);
   // During the first pass of the preprocessing phase, we also count
   // the number of predecessors, since whether this is <= n / 2
   // determines which of the two symmetric versions of the algorithm
@@ -529,7 +517,7 @@ void in_place_partition(int64_t *array, uint64_t n, int64_t pivot) {
   if (n % 2 == 1) num_pred += (array[n / 2] <= pivot);
   if (num_pred > n / 2) {
     finish_backward_in_place_partition(array, n, pivot, n - num_pred);
-    return;
+    return num_pred;
   }
   int64_t *prefixes = (int64_t*) malloc(sizeof(int64_t) * n / BLOCK_SIZE);
 
@@ -554,7 +542,7 @@ void in_place_partition(int64_t *array, uint64_t n, int64_t pivot) {
       }
     }
     // Now we do the main part of the loop:
-    
+//#pragma grainsize = ((m - shift) / BLOCK_SIZE) / (8 * __cilkrts_get_nworkers())
     parallel_for (int64_t j = shift; j < m / 2; j += BLOCK_SIZE) {
       int64_t sum = 0;
       // Now we iterate through a block of size BLOCK_SIZE
@@ -581,6 +569,7 @@ void in_place_partition(int64_t *array, uint64_t n, int64_t pivot) {
   // Now the prefix sum step. The first half of th eprefixes array is
   // already filled in, which lets us save a lot of potential cache
   // misses here.
+//#pragma grainsize = (n / (2 * BLOCK_SIZE)) / (8 * __cilkrts_get_nworkers())
   parallel_for (int64_t i = n / (2 * BLOCK_SIZE); i < n / BLOCK_SIZE; i++) {
     int64_t sum = 0;
     for (int64_t j = i * BLOCK_SIZE; j < i * BLOCK_SIZE + BLOCK_SIZE; j++) {
@@ -596,4 +585,198 @@ void in_place_partition(int64_t *array, uint64_t n, int64_t pivot) {
   // Now the reordering step:
   in_place_reorder(array, prefixes, n, pivot);
   free(prefixes);
+  return num_pred;
 }
+
+/*
+ * We use the same pivot selection strategy as libc_qsort.
+ */
+int64_t select_pivot(int64_t* array, uint64_t num_elts) {
+  int64_t* lo = array;
+  int64_t *hi = array + num_elts - 1;
+  int64_t *mid = lo + ((hi - lo) >> 1);
+  if (*mid < *lo) {
+    int64_t tmp = *mid;
+    *mid = *lo;
+    *lo = tmp;
+  }
+  if (*hi < *mid) {
+    int64_t tmp = *mid;
+    *mid = *hi;
+    *hi = tmp;
+  } else {
+    goto jump_over;
+  }
+  if (*mid < *lo) {
+    int64_t tmp = *mid;
+        *mid = *lo;
+        *lo = tmp;
+  }
+ jump_over:;    
+ return *mid;
+}
+
+/*
+ * Parallel quicksort implementation using our low-space parallel
+ * partition. This is called internally by the parallel_quicksort with
+ * fewer arguments. Once problem-sizes get to size_cutoff or smaller,
+ * we swap to serial.
+ */
+void parallel_quicksort(int64_t* array, uint64_t num_elts, uint64_t size_cutoff) {
+  if (num_elts <= 1) return;
+  if (num_elts <= size_cutoff) {
+    libc_quicksort(array, num_elts);
+  } else {
+    int64_t pivot = select_pivot(array, num_elts);
+    int64_t num_preds = in_place_partition(array, num_elts, pivot);
+    // Now we handle an important edge case. If it turns out that the
+    // vast majority (i.e. more than a constant fraction) of the
+    // elements equal the pivot, then the partition done in the
+    // previous step won't have been very useful. To detect that the
+    // pivot was very common, we select a new pivot from the
+    // predecessors P of the partition we just performed. If the new
+    // pivot equals the old one, then we perform another partition on
+    // P in which we partition on pivot - 1 (or for a more general
+    // sort implementation, we would partition based on < pivot
+    // instead of <= pivot). This places the elements equal to pivot
+    // in their final destination. Folowing the convention used in
+    // libc-qsort we use deterministic instead of random pivots; see
+    // http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.14.8162&rep=rep1&type=pdf
+    int64_t second_pivot = array[num_preds / 2];
+    if (second_pivot == pivot) {
+      parallel_spawn parallel_quicksort(array + num_preds, num_elts - num_preds, size_cutoff);
+      int64_t num_true_preds = in_place_partition(array, num_preds, pivot - 1);
+      parallel_spawn parallel_quicksort(array, num_true_preds, size_cutoff);
+    } else {
+      parallel_spawn parallel_quicksort(array, num_preds, size_cutoff);
+      parallel_spawn parallel_quicksort(array + num_preds, num_elts - num_preds, size_cutoff);
+    }
+    parallel_sync;
+  }
+}
+
+/*
+ * Parallel quicksort implementation using our low-space parallel
+ * partition. We swap to serial algorithm once problem sizes get to
+ * size n / 10 num-threads or smaller.
+ */
+void parallel_quicksort (int64_t* array, uint64_t num_elts) {
+  int64_t num_threads = __cilkrts_get_nworkers();
+  int64_t size_cutoff = num_elts / (num_threads * 8); 
+  parallel_quicksort(array, num_elts, size_cutoff);
+}
+
+
+
+/* 
+ * Inputs an array, two positions pos_new < pos_old, and a
+ * size. Rearranges array so that the size elements after pos_new are
+ * now after pos_old (but not necessarily in the same order as before).
+ */
+void transfer_back(int64_t* array, uint64_t pos_old, uint64_t pos_new, uint64_t size) {
+  if (pos_new + size > pos_old) {
+    uint64_t pos_old2 = pos_new + size;
+    uint64_t size2 = pos_old + size - pos_old2;
+    pos_old = pos_old2;
+    size = size2;
+  }
+  parallel_for (uint64_t i = 0; i < size; i++) {
+    uint64_t tmp = array[pos_new + i];
+    array[pos_new + i] = array[pos_old + i];
+    array[pos_old + i] = tmp;
+  }
+}
+
+/*
+ * Inputs an array that has been partitioned based on <= pivot or >
+ * pivot. Performs a binary search and returns the size of the first
+ * part of the partition.
+ */
+uint64_t find_split(int64_t* array, uint64_t size, int64_t pivot) {
+  if (size == 0) return 0;
+  if (array[0] > pivot) return 0;
+  int64_t left = 0;
+  int64_t right = size;
+  while (left  < right - 1) {
+    int64_t middle = (left + right) / 2;
+    if (array[middle] <= pivot) left = middle;
+    else right = middle;
+  }
+  return left + 1;
+}
+
+/*
+ * This is a simple in-place algorithm that has poor theoretical
+ * guarantees on its span; but when tuned appropriately can be made to
+ * work very well.
+ */
+uint64_t high_span_partition(int64_t* array, uint64_t n, int64_t pivot) {
+  uint64_t chunk_size =  n / max(BLOCK_SIZE, (8 * __cilkrts_get_nworkers()));
+  if (chunk_size == 0) return serial_partition(array, n, pivot);
+  uint64_t num_chunks = n / chunk_size + 1;
+  parallel_for(uint64_t chunk = 0; chunk < num_chunks; chunk++) {
+    uint64_t chunk_start = chunk * chunk_size;
+    int64_t shortened_chunk_size = min((chunk + 1) * chunk_size, n) - chunk_start;
+    libc_partition_strict(array + chunk_start, shortened_chunk_size, pivot);
+  }
+  uint64_t num_preds_total = find_split(array, chunk_size, pivot);
+  for (uint64_t chunk = 1; chunk < num_chunks; chunk++) {
+    uint64_t chunk_start = chunk * chunk_size;
+    int64_t shortened_chunk_size = min((chunk + 1) * chunk_size, n) - chunk_start;
+    uint64_t num_preds = find_split(array + chunk_start, shortened_chunk_size, pivot);
+    transfer_back(array, chunk_start, num_preds_total, num_preds);
+    num_preds_total += num_preds;
+  }
+  return num_preds_total;
+}
+
+/*
+ * Parallel quicksort implementation using our high-space parallel
+ * partition. This is called internally by the parallel_quicksort with
+ * fewer arguments. Once problem-sizes get to size_cutoff or smaller,
+ * we swap to serial.
+ */
+void parallel_quicksort_high_span(int64_t* array, uint64_t num_elts, uint64_t size_cutoff) {
+  if (num_elts <= 1) return;
+  if (num_elts <= size_cutoff) {
+    libc_quicksort(array, num_elts);
+  } else {
+    int64_t pivot = select_pivot(array, num_elts);
+    int64_t num_preds = high_span_partition(array, num_elts, pivot);
+    // Now we handle an important edge case. If it turns out that the
+    // vast majority (i.e. more than a constant fraction) of the
+    // elements equal the pivot, then the partition done in the
+    // previous step won't have been very useful. To detect that the
+    // pivot was very common, we select a new pivot from the
+    // predecessors P of the partition we just performed. If the new
+    // pivot equals the old one, then we perform another partition on
+    // P in which we partition on pivot - 1 (or for a more general
+    // sort implementation, we would partition based on < pivot
+    // instead of <= pivot). This places the elements equal to pivot
+    // in their final destination. Folowing the convention used in
+    // libc-qsort we use deterministic instead of random pivots; see
+    // http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.14.8162&rep=rep1&type=pdf
+    int64_t second_pivot = array[num_preds / 2];
+    if (second_pivot == pivot) {
+      parallel_spawn parallel_quicksort_high_span(array + num_preds, num_elts - num_preds, size_cutoff);
+      int64_t num_true_preds = high_span_partition(array, num_preds, pivot - 1);
+      parallel_spawn parallel_quicksort_high_span(array, num_true_preds, size_cutoff);
+    } else {
+      parallel_spawn parallel_quicksort_high_span(array, num_preds, size_cutoff);
+      parallel_spawn parallel_quicksort_high_span(array + num_preds, num_elts - num_preds, size_cutoff);
+    }
+    parallel_sync;
+  }
+}
+
+/*
+ * Parallel quicksort implementation using our high-span  parallel
+ * partition. We swap to serial algorithm once problem sizes get to
+ * size n / 10 num-threads or smaller.
+ */
+void parallel_quicksort_high_span (int64_t* array, uint64_t num_elts) {
+  int64_t num_threads =  __cilkrts_get_nworkers();
+  int64_t size_cutoff = num_elts / (num_threads * 8); 
+  parallel_quicksort_high_span(array, num_elts, size_cutoff);
+}
+
