@@ -5,11 +5,12 @@ Please feel free to email me, especially if you have a bug to report.
 
 To reproduce the experiments in writeup.pdf:
 (1) Modify params.h so that exactly one of USE_CILK or RUN_SERIAL are defined; this determines which experiment you are running.
-(2) Run make to compile the code. (I used GCC 7.3.1)
+(2) Run make to compile the code. (I used GCC 7.3.0; note that CILK is not included in some later versions)
 (3) If executing the serial experiment, run:   ./main > serialtable.tex
     If executing the parallel experiment, run: ./main > cilktable.tex
+    In our experiments, we actually ran
+    numactl --interleave=all taskset -c 0-17 ./main
+    in order to use a muma-friendly memory-allocation policy and
+    to assign threads to distinct cores (in order to disable hyprethreading).    
 (4) Recompile the writeup document by running: pdflatex writeup
 The table in writeup.pdf should now reflect the experiment you ran.
-
-For help using cachegrind to count instruction-counts and
-cache-misses, see file callgrind_help.txt
