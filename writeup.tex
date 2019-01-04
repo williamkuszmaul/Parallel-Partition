@@ -1,5 +1,34 @@
-\documentclass[sigplan, twocolumn]{amsart}
-%\usepackage[ruled,vlined,commentsnumbered,titlenotnumbered]{algorithm2e}
+\documentclass[sigconf]{acmart}
+
+
+\usepackage{booktabs} % For formal tables
+
+
+% Copyright
+%\setcopyright{none}
+%\setcopyright{acmcopyright}
+%\setcopyright{acmlicensed}
+\setcopyright{rightsretained}
+%\setcopyright{usgov}
+%\setcopyright{usgovmixed}
+%\setcopyright{cagov}
+%\setcopyright{cagovmixed}
+
+
+% DOI
+\acmDOI{10.475/123_4}
+
+% ISBN
+\acmISBN{123-4567-24-567/08/06}
+
+%Conference
+\acmConference[SPAA '19]{ACM Symposium on Parallelism in Algorithms and Architectures}{July 2019}{Phoenix, AZ, USA}
+\acmYear{2019}
+\copyrightyear{2019}
+
+
+\acmArticle{4}
+\acmPrice{15.00}
 
 
 \usepackage{enumitem}
@@ -24,101 +53,17 @@ red,densely dashed,every mark/.append style={solid,fill=red!80!black},mark=diamo
 }
 }
 
-\input{cilktable.tex}
+\input{paralleltable.tex}
 \input{serialtable.tex}
 
-
-
-\usepackage{url}
-\usepackage{fullpage}
-%\setlength{\oddsidemargin}{0pt}
-%\setlength{\evensidemargin}{0pt}
-%\setlength{\textwidth}{6.5in}
-%\setlength{\topmargin}{0in}
-%\setlength{\textheight}{9in}
-%\usepackage{refcheck}
-%\usepackage{pslatex} % use times roman
-\newcommand{\github}{\textit{github.com/williamkuszmaul/Parallel-Partition}}
+\newcommand{\dec}{\operatorname{dec}}
+\newcommand{\github}{\url{github.com/williamkuszmaul/Parallel-Partition}}
 \newcommand{\defn}[1]       {{\textit{\textbf{\boldmath #1}}}}
 \renewcommand{\paragraph}[1]{\vspace{0.09in}\noindent{\bf \boldmath #1.}} 
 \usepackage{amsmath}
-\usepackage{algorithm}
-\usepackage[noend]{algpseudocode}
 \usepackage{amssymb}
 \usepackage{amsthm}
-\usepackage{color}
-\usepackage{tikz}
-\usetikzlibrary{arrows,shapes}
-\usetikzlibrary{matrix}
-\usepackage{array}
-\usepackage{xy}
-\usepackage{setspace}
-\usepackage{multicol}
-\usepackage{algorithm}
-\usepackage{hyperref}
-%%\doublespacing
-%\usepackage{natbib}
-%% \usepackage{cite}
-%% \usepackage[margin=1in,letterpaper]{geometry}
-%% \setlength{\topmargin}{0 in}
-%% \setlength{\textheight}{9 in}
 \usepackage{todonotes}
-
-%% \documentclass[12pt,letterpaper]{amsart}
-%% \setlength{\oddsidemargin}{0pt}
-%% \setlength{\evensidemargin}{0pt}
-%% \setlength{\textwidth}{6.5in}
-%%\setlength{\topmargin}{1in}
-%% \setlength{\textheight}{9in}
-%% %\usepackage{refcheck}
-%% \usepackage{pslatex} % use times roman
-%% \usepackage{amsmath}
-%% \usepackage{amssymb}
-%% \usepackage{amsthm}
-%% \usepackage{color}
-%% \usepackage{array}
-%% \usepackage{xy}
-%% \usepackage{setspace}
-
-%\usepackage[left=1.5in,right=1.5in, top=1.5in,bottom=1.5in,]{geometry}
-
-\newcommand{\NN}{\mathbb{N}} \newcommand{\ZZ}{\mathbb{Z}}
-\newcommand{\range}{\text{ran}}
-\newcommand{\poly}{\operatorname{poly}}
-\newcommand{\domain}{\text{dom}} \newcommand{\im}{\text{im}}
-\newcommand{\sign}{\operatorname{sign}} \newcommand{\si}{\mathbf{S}}
-\newcommand{\OR}{\vee} \newcommand{\E}{\mathbb{E}}
-\newcommand{\AND}{\wedge} \newcommand{\PP}{\mathcal{P}}
-\newcommand{\edit}{\operatorname{ed}}
-\newcommand{\dtw}{\operatornamewithlimits{dtw}}
-\newcommand{\ed}{\operatorname{ed}}
-\newcommand{\ham}{\operatorname{Ham}}
-\newcommand{\dist}{\Delta_{\ell_1}}
-\newcommand{\argmin}{\operatornamewithlimits{argmin}}
-\newcommand{\subproblem}{\operatornamewithlimits{endToMiddle}}
-\newcommand{\xrun}{r_x} \newcommand{\yrun}{r_y}
-\newcommand{\yrunlength}{l_y} \newcommand{\yprevrunlength}{p_y}
-\newcommand{\xrunlength}{l_x} \newcommand{\yoffset}{o_y}
-\newcommand{\xoffset}{o_x}
-\newcommand{\yrunoffset}{o_x}
-\newcommand{\xrunoffset}{o_y}
-\newcommand{\tipToMiddle}{\operatorname{SP}}
-\newcommand{\rundiff}{d}
-\newcommand{\dec}{\operatorname{dec}}
-
-
-
-%----------------MACROS---------------%
-%% \newtheoremstyle{slanted}% <name>
-%% {3pt}% <Space above>
-%% {3pt}% <Space below>
-%% {\slshape}% <Body font>
-%% {}% <Indent amount>
-%% {\bfseries}% <Theorem head font>
-%% {.}% <Punctuation after theorem head>
-%% {.5em}% <Space after theorem heading>
-%% {}% <Theorem head spec (can be left empty, meaning `normal')>
-
 
 \newtheorem{thm}{Theorem}[section]
 \newtheorem{lem}[thm]{Lemma}
@@ -143,28 +88,76 @@ red,densely dashed,every mark/.append style={solid,fill=red!80!black},mark=diamo
 \newtheorem{observation}[thm]{Observation}
 
 \usepackage{hyperref}
-%-----------------Beginning document.
+
+
+
 \begin{document}
+\title{Simple and Space-Efficient Parallel-Partition Algorithms using Exclusive-Read-and-Write Memory}
+\subtitle{}
 
-\title{A Simple In-Place Parallel Partition using Exclusive-Read-and-Write Memory}
-\author{William Kuszmaul }
-\maketitle
+\author{William Kuszmaul}
+\authornote{Supported by a Hertz Fellowship and a NSF GRFP Fellowship}
+\affiliation{%
+  \institution{Massachusetts Institute of Technology}
+}
+\email{kuszmaul@mit.edu}
 
 
-  \begin{abstract}
+% The default list of authors is too long for headers.
+\renewcommand{\shortauthors}{William Kuszmaul}
+
+
+\begin{abstract}
 We present a simple in-place algorithm for parallel partition that has
 work $O(n)$ and span $O(\log n \cdot \log \log n)$. The algorithm uses
 only exclusive read/write shared variables, and can be implemented
 using parallel-for-loops without any additional concurrency
 considerations (i.e., the algorithm is in the EREW PRAM model). As an
 immediate consequence, we also get a simple in-place quicksort
-algorithm with work $O(n \log n)$ and span $O(\log^2 \log \log n)$.
+algorithm with work $O(n \log n)$ and span $O(\log^2 n \log \log n)$.
 
 Using our algorithmic techniques, we implement an (almost) in-place
-parallel-prefix. In addition to achieving much better memory
-utilization, the algorithm achieves a modest speedup over its
-out-of-place counterpart.
- \end{abstract}
+parallel partition. In addition to achieving much better memory
+utilization, the algorithm leverages its improved cache behavior to
+achieve a speedup over its out-of-place counterpart.
+
+We also present an alternative in-place parallel-partition algorithm
+with a larger span of $O(\sqrt{n \log n})$, but which is designed to
+have very small overhead. We show that when the algorithm
+is tuned appropriately, and given a large enough input to achieve high
+parallelism, the algorithm can be made to outperform is lower-span
+peers.
+
+
+\end{abstract}
+
+%
+% The code below should be generated by the tool at
+% http://dl.acm.org/ccs.cfm
+% Please copy and paste the code instead of the example below.
+%
+\begin{CCSXML}
+<ccs2012>
+<concept>
+<concept_id>10003752.10003809.10010170.10010171</concept_id>
+<concept_desc>Theory of computation~Shared memory algorithms</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+</ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Theory of computation~Shared memory algorithms}
+
+\keywords{Parallel Partition, EREW PRAM, in-place algorithms}
+
+
+\maketitle
+
+
+
+
+
+ 
 
 \section{Introduction}
 
@@ -185,18 +178,23 @@ parallel partition on arrays of size $n$ with work $O(n)$ and span
 $O(\log n)$ \cite{Blelloch96,AcarBl16}. Moreover, the algorithm uses
 only exclusive read/write shared memory variables (i.e., it is an
 \defn{EREW} algorithm). This eliminates the need for concurrency
-  mechanisms such as locks, and ensures good behavior even if the time
-  to access a location is a function of the number of threads trying
-  to access it (or its cache line) concurrently.
+mechanisms such as locks and atomic variables, and ensures good
+behavior even if the time to access a location is a function of the
+number of threads trying to access it (or its cache line)
+concurrently. EREW algorithms also have the advantage that their
+behavior is internally deterministic, meaning that
+the behavior of the algorithm will not differ from run to run, which
+makes test coverage, debugging, and reasoning about performance
+substantially easier \cite{BlellochFi12}.
 
-The parallel algorithm differs from its serial counterpart in the use
-of extra memory, however. Whereas the serial algorithm is typically
+The parallel-partition algorithm suffers from using a large amount of
+auxiliary memory, however. Whereas the serial algorithm is typically
 implemented in place, the parallel algorithm relies on the use of two
 auxiliary arrays of size $n$. To the best of our knowledge, the only
-linear-work and $\operatorname{polylog}(n)$-span algorithms for
-parallel partition that \emph{are} in-place require the use of atomic
+known linear-work and $\operatorname{polylog}(n)$-span algorithms for
+parallel partition that are in-place require the use of atomic
 operations (e.g, fetch-and-add)
-\cite{HeidelbergerNo90,AxtmannWi17,TsigasZh03}. 
+\cite{HeidelbergerNo90,AxtmannWi17,TsigasZh03}.
 
 An algorithm's memory efficiency can be critical on large inputs. The
 memory consumption of an algorithm determines the largest problem size
@@ -206,24 +204,31 @@ subproblems in memory; the size of these subproblems is again
 bottlenecked by the algorithm's memory-overhead \cite{Vitter08}. In
 multi-user systems, memory efficiency is also important on small
 inputs, since processes with larger memory-footprints can hog the
-cache, slowing down other processes.
+cache, slowing down other processes. 
 
 For sorting algorithms, in particular, special attention to memory
-efficiency is often given. In the context of parallel algorithms,
-however, the most practically efficient algorithms fail to run in
-place, at least without the additional use of atomic-fetch-and-add
-variables \cite{HeidelbergerNo90, AxtmannWi17, TsigasZh03}, or the
-loss of theoretical guarantees on parallelism
-\cite{FrancisPa92}. Parallel merge sort \cite{Hagerup89} was made
-in-place by Katajainen \cite{Katajainen93}, but has proven too
-sophisticated for practical applications. Bitonic sort
-\cite{BlellochLe98} is naturally in-place, and can be practical in
-certain applications on super computers, but suffers in general from
-requiring work $\Theta(n \log^2 n)$ rather than $O(n \log
-n)$. Parallel quicksort, on the other hand, despite the many efforts
-to optimize it \cite{HeidelbergerNo90, AxtmannWi17, TsigasZh03,
-  FrancisPa92, Frias08}, has eluded any in-place EREW algorithms due
-to its reliance on parallel partition.
+efficiency is often given. This is because (a) a user calling the sort
+function may already be using almost all of the memory in the system;
+and (b) sorting algorithms, and especially parallel sorting
+algorithms, are often bottlenecked by memory bandwidth.
+
+In the context of parallel algorithms, however, the most practically
+efficient sorting algorithms fail to run in place, at least without
+the additional use of atomic-fetch-and-add variables
+\cite{HeidelbergerNo90, AxtmannWi17, TsigasZh03}, or the loss of
+theoretical guarantees on parallelism \cite{FrancisPa92}. Parallel
+merge sort \cite{Hagerup89} was made in-place by Katajainen
+\cite{Katajainen93}, but has proven too sophisticated for practical
+applications. Bitonic sort \cite{BlellochLe98} is naturally in-place,
+and can be practical in certain applications on super computers, but
+suffers in general from requiring work $\Theta(n \log^2 n)$ rather
+than $O(n \log n)$. Parallel quicksort, on the other hand, despite the
+many efforts to optimize it \cite{HeidelbergerNo90, AxtmannWi17,
+  TsigasZh03, FrancisPa92, Frias08}, has eluded any in-place EREW (or
+even CREW) algorithms due to its reliance on parallel
+partition.\footnote{In a \defn{CREW} algorithm, reads may be
+  concurrent, but writes may not. CREW stands for
+  \emph{concurrent-read exclusive-write}.}
 
 
 \paragraph{Results}
@@ -233,17 +238,25 @@ only exclusive read/write shared variables, and can be implemented
 using parallel-for-loops without any additional concurrency
 considerations. As an immediate consequence, we also get a simple
 in-place quicksort algorithm with work $O(n \log n)$ and span
-$O(\log^2 \log \log n)$.
+$O(\log^2 n \log \log n)$.
 
-The simplicity of our algorithmic techniques makes them conducive to
-practical implementations. We implement and optimize an (almost)
-in-place implementation. Because the in-place algorithm eliminates the
-use of large auxiliary arrays, the algorithm is able to achieve a
-significant reduction in cache misses over its out-of-place
-counterpart. In addition to significantly reducing the memory
-overhead, the space-efficient algorithm is able to achieve a modest
-performance improvement, and on a single thread performs within a
-factor of two of the in-place serial algorithm.
+Using our algorithmic techniques, we implement and optimize a
+space-efficient parallel partition. Because the in-place algorithm
+eliminates the use of large auxiliary arrays, the algorithm is able to
+achieve a significant reduction in cache misses over its out-of-place
+counterpart, resulting in performance improvements both in serial and
+in parallel.
+
+We also present an alternative in-place parallel-partition algorithm
+with a larger span of $O(\sqrt{n \log n})$, but which is designed to
+have very small engineering overhead. On a single core, the algorithm
+performs within 25\% of the serial GNU Libc quicksort partition
+algorithm. We show that when the algorithm is tuned appropriately, and
+given a large enough input to achieve high parallelism, the algorithm
+can be made to outperform is lower-span peers. The low-span
+algorithms, on the other hand, ensure good scaling with less
+sensitivity to the number of cores and the input size.
+
 
 \section{Preliminaries}\label{secprelim}
 
@@ -284,8 +297,7 @@ $$T_1 / p \le T_p \le T_1 / p + T_\infty.$$
 
 The work-stealing algorithms used in the Cilk extension of C/C++ realize
 the guarantee offered by Brent's Theorem within a constant factor
-\cite{BlumofeJo96,BlumofeLe99}, with the added caveat that parallel
-for-loops typically induce an additional additive overhead of $O(\log
+\cite{BlumofeJo96,BlumofeLe99}, with the added caveat that parallel-for-loops typically induce an additional additive overhead of $O(\log
 R)$.
 
 \paragraph{Memory Model} Memory is \defn{exclusive-read} and \defn{exclusive-write}. That is, no two threads are ever permitted to attempt to read or write to the same variable concurrently. The exclusive-read exclusive-write memory model is sometime referred to as the \defn{EREW model} (see, e.g., \cite{Hagerup89}).
@@ -302,10 +314,10 @@ parent-child tree is not permitted to exceed $O(\log n)$.\footnote{The
 The parallel partition problem takes an input array $A$ of size $n$,
 and a \defn{decider function} $\dec$ that determines for each element
 $a[i] \in A$ whether or not $A[i]$ is a \defn{predecessor} or a
-\defn{successor}. That is, $\dec(A[i]) = 1$ if $A[i]$ is a predecessor,
-and $\dec(A[i]) = 0$ if $A[i]$ is a successor. The behavior of the
-parallel partition is to reorder the elements in the array $A$ so that
-the predecessors appear before the successors.
+\defn{successor}. That is, $\dec(A[i]) = 1$ if $A[i]$ is a
+predecessor, and $\dec(A[i]) = 0$ if $A[i]$ is a successor. The
+behavior of the parallel partition is to reorder the elements in the
+array $A$ so that the predecessors appear before the successors.
 
 
 \paragraph{The (Standard) Linear-Space Parallel Partition} The linear-space implementation of parallel partition consists of two phases \cite{Blelloch96,AcarBl16}:
@@ -506,21 +518,21 @@ $O(\log \log n)$. Thus we have:
 
 \paragraph{Allowing for Repeated Elements} In proving Theorem \ref{thminplace} we assumed for simplicity that the elements of $A$ are distinct. This plays an important role in how we store the values $v_i$ in the blocks $X_i$. To eliminate this requirement without changing the work and span of the algorithm, we can require that $b \ge 4 \lceil \log (n + 1) \rceil + 2$, and use the following slightly more complex encoding of the $v_i$'s.
 
-Consider the first $b$ letters of $X_i$ as a series of pairs $(x_1,
-x_2), \ldots, (x_{b - 1}, x_b)$. If at least half of the pairs consist
-of distinct elements, then we can reorder those pairs to appear at the
-front of $X_i$, and use them to encode values $v_i$. (For each $X_i$
-this reordering can be done once before the
+Consider the first $b$ letters of $X_i$ as a sequence of pairs, given
+by $(x_1, x_2), \ldots, (x_{b - 1}, x_b)$. If at least half of the
+pairs consist of distinct elements, then we can reorder those pairs to
+appear at the front of $X_i$, and use them to encode values
+$v_i$. (For each $X_i$ this reordering can be done once before the
 Implicit-Parallel-Prefix-Sum phase, adding only linear work and
 logarithmic span to the full algorithm.) If, on the other hand, at
 least half the pairs consist of equal-value elements, then we can
 reorder the pairs so that the first $\lceil \log (n + 1) \rceil + 1$
 of them satisfy this property. That is, if we reindex the reordered
-elements as $x_0,x_1,\ldots$, then $x_{2j + 1} = x_{2j + 2}$ for each $j =
-0, 1, \ldots, \lceil \log (n + 1) \rceil$. To encode a value $v_i$,
-we explicitly overwrite the second element in each of the pairs
-$(x_3, x_4), (x_5, x_6), \ldots$ with the bits of $v_i$, overwriting each
-element with one bit.
+elements as $x_0,x_1,\ldots$, then $x_{2j + 1} = x_{2j + 2}$ for each
+$j = 0, 1, \ldots, \lceil \log (n + 1) \rceil$. To encode a value
+$v_i$, we explicitly overwrite the second element in each of the pairs
+$(x_3, x_4), (x_5, x_6), \ldots$ with the bits of $v_i$, overwriting
+each element with one bit.
 
 To read the value $v_i$, we check whether $x_1 = x_2$ in order to
 determine which encoding is being used and then unencode the bits
@@ -532,59 +544,154 @@ the preceding element).
 
 \section{Experimental Evaluation}\label{secexp}
 
-\begin{figure*}[t]
+
+
+\begin{figure*}
   \begin{center}
-  \begin{subfigure}[t]{0.45\textwidth}
-    \CILKtable
-    \caption{For a fixed table-size $n = 2^{30}$, we compare each
-      implementation's runtime to a serial baseline, which takes 4.27
-      seconds to complete. The $x$-axis plot the number of worker
-      threads being used, and the $y$-axis plots the multiplicative
-      speedup over the serial baseline.}
-    \label{tablecilk}
-  \end{subfigure}
-  \hspace{.5cm}
-  \begin{subfigure}[t]{0.45\textwidth}
-    \CILKtabletwo
-    \caption{We compare the performance of the implementations running
-      on eight worker threads on varying input sizes. The $x$-axis is
-      the log-base-$2$ of the input size, and the $y$-axis is the
-      multiplicative speedup when compared to the serial baseline.}
-    \label{tablecilk2}
-  \end{subfigure}
-
-
-  \begin{subfigure}[t]{0.45\textwidth}
-    \serialtable
-    \caption{We compare the performance of the implementations in
-      serial, with no scheduling overhead. The $x$-axis is the
-      log-base-$2$ of the input size, and the $y$-axis is the
-      multiplicative slowdown when compared to the serial baseline.}
-    \label{tableserial}
-  \end{subfigure}
-
-  
+    \CILKsorttable
   \end{center}
-  \caption{}
-  \label{fig1}
+  \caption{We compare the performance of the low-space and high-span
+    sorting implementations running on varying numbers of threads and
+    input sizes. The $x$-axis is the number of worker threads, the
+    $y$-axis is the multiplicative speedup when compared to the serial
+    baseline, and the log-base-two size of the input is indicated for
+    each curve in the key. Each time (including each serial baseline)
+    is averaged over five trials.}
+  \label{tablesort}
+\end{figure*}
+
+
+
+\begin{figure*}
+  \begin{center}
+    \CILKtable 
+  \end{center}
+    \caption{For a fixed table-size $n = 2^{28}$, we compare each
+      implementation's runtime to a serial baseline, which takes 0.96
+      seconds to complete (averaged over five trials). The $x$-axis
+      plots the number of worker threads being used, and the $y$-axis
+      plots the multiplicative speedup over the serial baseline. Each
+      time is averaged over five trials.}
+      \label{tablecilk}
+\end{figure*}
+
+\begin{figure*}
+  \begin{center}
+    \cilktwotabletwo
+  \end{center}
+  \caption{We compare the performance of the implementations running
+    on eighteen worker threads on varying input sizes. The $x$-axis is
+    the log-base-$2$ of the input size, and the $y$-axis is the
+    multiplicative speedup when compared to the serial baseline. Each
+    time (including each serial baseline) is averaged over five
+    trials.}
+  \label{tablecilk2}
+\end{figure*}
+
+
+\begin{figure*}
+  \begin{center}
+    \serialtable
+  \end{center}
+  \caption{We compare the performance of the implementations in
+    serial, with no scheduling overhead. The $x$-axis is the
+    log-base-$2$ of the input size, and the $y$-axis is the
+    multiplicative slowdown when compared to the serial baseline. Each
+    time (including each serial baseline) is averaged over five
+    trials.}
+  \label{tableserial}
+\end{figure*}
+
+\begin{figure*}
+  \begin{center}
+    \partitionbandwidthboundtable
+  \end{center}
+  \caption{We compare the performances of the low-space and high-span
+    parallel-partition algorithms to their ideal performance
+    determined by memory-bandwidth constraints on inputs of size
+    $2^{28}$. The $x$-axis is the number of worker threads, and the
+    $y$-axis is the multiplicative speedup when compared to the serial
+    baseline (which is computed by an average over five trials). Each
+    data-point is averaged over five trials.}
+  \label{tablebandwidth}
 \end{figure*}
 
 
 In this section, we implement the techniques from Section \ref{secalg}
-to build a space-efficient parallel partition function. Our
+to build a space-efficient parallel-partition function. Our
 implementation considers an array of $n$ 64-bit integers, and
 partitions them based on a pivot. The integers in the array are
 initially generated so that each is randomly either larger or smaller
 than the pivot.
 
-We compare four implementations:
+In Subsection \ref{subseclowspan}, we compare the performance of three
+parallel-partition implementations: (1) The \defn{high-space}
+implementation which follows the standard parallel-partition algorithm
+exactly; (2) a \defn{medium-space} implementation which reduces the
+space used for the parallel-prefix step; and (3) a \defn{low-space}
+implementation which further eliminates the auxiliary space used in the
+reordering phase of the algorithm. The low-space implementation still
+uses a small amount of auxiliary memory for the parallel-prefix,
+storing every $O(\log n)$-th element of the parallel-prefix array
+explicitly rather than using the implicit-storage approach in Section
+\ref{secalg}. Nonetheless the space consumption is several orders of
+magnitude smaller than the original algorithm.
+
+In addition to achieving a space-reduction, the better cache-behavior
+of the low-space implementation allows for it to achieve a speed
+advantage over its peers, in some cases completing roughly twice as
+fast as the medium-space implementation and four times as fast as the
+low-space implementation.
+
+In Subsection \ref{subsechighspan}, we present a fourth
+parallel-partition algorithm which we call the \defn{two-layer
+  algorithm}, and which runs fully in place but has a polynomial span
+of $\Theta(\sqrt{n \log n})$. The polynomial span of the algorithm
+makes it so that a naive implementation performs poorly. Nonetheless,
+we show that by tuning the algorithm to the number of worker threads,
+further speedup can often be achieved over the low-space algorithm.
+
+The two-layer algorithm has the advantage that is very simple to
+implement, and runs in serial at almost the same speed as GNU Libc
+quicksort's serial algorithm. On the other hand the algorithm's
+performance is much more sensitive to input size and number of cores
+than is the low-space implementation. On a machine with sufficiently
+many cores (and sufficiently large memory bandwidth), the
+polylogarithmic span of the low-space implementation is desirable.
+
+
+\paragraph{Machine Details}
+Our experiments are performed on a two-socket machine with eighteen
+2.9 GHz Intel Xeon E5-2666 v3 processors. To maximize the memory
+bandwidth of the machine, we use a NUMA memory-placement policy in
+which memory allocation is spread out evenly across the nodes of the
+machine; this is achieved using the \emph{interleave=all} option in
+the Linux \emph{numactl} tool \cite{Kleen05}. Worker threads in our
+experiments are each given their own core, with hyperthreading
+disabled.
+
+Our algorithms are implemented using the CilkPlus task parallelism
+library in C++. The implementations avoid the use of concurrency
+mechanisms and atomic operations, but do allow for concurrent reads to
+be performed on shared values such as $n$ and the pointer to the input
+array. Our code is compiled using g++ 7.3.0, with \emph{march=native}
+and at optimization level three. 
+
+Our implementations are available at \\ \github.
+
+
+\subsection{Comparing Low-Span Algorithms}\label{subseclowspan}
+
+In this section, we compare four partition implementations:
 \begin{itemize}[leftmargin = .15in]
-\item \emph{A Serial Baseline:} This uses the standard serial in-place
-partition algorithm.
+\item \emph{A Serial Baseline:} This uses the serial in-place
+  partition implementation from GNU Libc quicksort, with minor
+  adaptions to optimize it for the case of sorting 64-bit integers
+  (i.e., inlining the comparison function, etc.).
 \item \emph{The High-Space Parallel Implementation:} This uses the
   standard parallel partition algorithm \cite{Blelloch96,AcarBl16}, as
-  described in Section \ref{secprelim}. The implementation has a space
-  overhead of roughly $2n$ eight-byte words.
+  described in Section \ref{secprelim}. The space overhead is roughly
+  $2n$ eight-byte words.
 \item \emph{The Medium-Space Parallel Implementation:} Starting with
   the high-space implementation, we reduce the space used by the
   Parallel-Prefix Phase by only constructing every $O(\log n)$-th
@@ -619,9 +726,20 @@ phase completely in-place using the preprocessing technique in Section
 the $\frac{n}{32}$ additional 8-byte words used in the prefix sum.
 \end{itemize}
 
-The three parallel algorithms all have work $O(n)$ and span $O(\log
-n)$.
+All three parallel-implementations have work $O(n)$ The high- and
+medium- space implementations have span $O(\log n)$, while the
+low-space implementation has span $O(\log^2 n)$ (due to the fact that
+for convenience of implementation parallel-for-loops are broken into
+chunks of size $64 = O(\log n)$).
 
+We remark that the ample parallelism of the low-space algorithm makes
+it so that for large inputs the value $64$ can easily be increased
+substantially without negatively effecting algorithm performance. For
+example, on an input of size $2^{28}$, increasing it to $4096$ has
+essentially no effect on the empirical runtime while bringing the
+auxiliary space-consumption down to a $\frac{1}{2048}$-fraction of the
+input size. (In fact, the increase from 64 to 4096 results in roughly
+a 5\% speedup.)
 
 \paragraph{An Additional Optimization for The High-Space Implementation}
 The optimization of reducing the prefix-sum by a factor of $O(\log n)$
@@ -629,26 +747,26 @@ at the top level of recursion, rather than simply by a factor of two,
 can also be applied to the standard parallel-prefix algorithm when
 constructing a prefix-sum array of size $n$. Even without the space
 reduction, this reduces the (constant) overhead in the parallel prefix
-sum, while keeping the overall span of the algorithm at $O(\log
-n)$. We perform this optimization in the high-space implementation.
+sum, while keeping the overall span of the parallel-prefix operation
+at $O(\log n)$. We perform this optimization in the high-space
+implementation.
 
 \paragraph{Performance Comparison}
 Figure \ref{tablecilk} graphs the speedup of the each of the parallel
 algorithms over the serial algorithm, using varying numbers of worker
-threads on an 8-core machine with a fixed input size of $n =
-2^{30}$. Both space optimizations result in performance improvements,
+threads on an 18-core machine with a fixed input size of $n =
+2^{28}$. Both space optimizations result in performance improvements,
 with the low-space implementation performing almost twice as well as
-the high-space implementation on eight threads. Similar speedups on
-eight threads are achieved on smaller inputs; see Figure
-\ref{tablecilk2}, which graphs speedup for input sizes starting at
-$2^{23}$, the smallest size for which consistent time measurements can
-be taken without averaging over many trials.
+the medium-space implementation on eighteen threads, and almost four
+times as well as the high-space implementation. Similar speedups are
+achieved on smaller inputs; see Figure \ref{tablecilk2}, which graphs
+speedup for input sizes starting at $2^{23}$.
 
 Figure \ref{tableserial} compares the performances of the
-implementations in serial. Parallel for-loops are replaced with serial
+implementations in serial. Parallel-for-loops are replaced with serial
 for-loops to eliminate scheduler overhead. As the input-size varies,
 the ratios of the runtimes vary only slightly. The low-space
-implementation performs within a factor of two of the serial
+implementation performs within a factor of roughly 1.8 of the serial
 implementation. As in Tables \ref{tablecilk} and \ref{tablecilk2},
 both space optimizations result in performance improvements.
 
@@ -657,15 +775,15 @@ If we compare the number of instructions performed by the three
 parallel implementations, then the medium-space algorithm would seem
 to be the clear winner. Using Cachegrind to profile the number of
 instructions performed in a (serial) execution on an input of size
-$2^{25}$, the high-space, medium-space, and low-space implementations
-perform 897 million, 593 million, and 871 million instructions,
+$2^{28}$, the high-space, medium-space, and low-space implementations
+perform 4.4 billion, 2.9 billion, and 4.6 billion instructions,
 respectively.
 
-Cache misses tell a different story. Using Cachegrind to profile the
-number of top-level cache misses in a (serial) execution on an input
-of size $2^{25}$, the high-space, medium-space, and low-space
-implementations incur 38.1 million, 21.4 million, and 17.1 million
-cache misses, respectively.
+Cache misses tell a different story, however. Using Cachegrind to
+profile the number of top-level cache misses in a (serial) execution
+on an input of size $2^{28}$, the high-space, medium-space, and
+low-space implementations incur 305 million, 171 million, and 124
+million cache misses, respectively.
 
 To a first approximation, the number of cache misses by each algorithm
 is proportional to the number of times that the algorithm scans
@@ -681,27 +799,209 @@ focus on only one half of the input array) can be combined with the
 construction of (one half of) the auxiliary array used in the Parallel
 Prefix Sum Phase, saving another half of a pass.
 
-\paragraph{Machine and Implementation Details}
-Our experiments are performed on a machine with eight 2.9 GHz Intel
-Xeon E5-2666 v3 processors, and 30 GB of RAM.
 
-Our algorithms are implemented using the CilkPlus task-parallelism
-library in C++. The implementations avoid the use of concurrency
-mechanisms and atomic operations, but do allow for concurrent reads to
-be performed on shared values such as $n$ and the pointer to the input
-array. The parallelism is achieved through simple parallel-for-loops,
-with one exception at the beginning of the low-space implementation,
-when the number of predecessors in the input array is
-computed. Although CilkPlus Reducers (or OpenMP Reductions) could be
-used to perform this parallel summation within a parallel-for-loop, we
-found a slightly more ad-hoc approach to be faster: Using a simple
-recursive structure, we manually implemented a parallel-for-loop with
-CILK Spawns and Syncs, allowing for the summation to be performed
-within the recursion; to amortize the cost of Cilk thread spawns, the
-ad-hoc parallel-for-loop reverts to a serial computation when the
-subarray size becomes 256 or smaller.
+%% There are additional slightly more tricky potential optimizations
+%% that we did not make. One could, for example, also combine the
+%% construction of the other half of the auxiliary array used in the
+%% Parallel Prefix Sum Phase with the top level of the Preprocessing
+%% Phase; this is made more subtle by the fact that when performing the
+%% top level of the Preprocessing Phase, we do not know yet whether we
+%% will be recursing on the left or right half of the array. One could
+%% also implement the later levels of the Preprocessing Phase to have a
+%% more cache-friendly recursive structure, starting with the final step
+%% of the Preprocessing Phase and recursively working backwords to
+%% perform the entire phase in a depth-first recursive tree. Evaluating
+%% these optimizations would be an interesting direction of future work.
 
-Our implementations are available at \\ \github.
+\paragraph{The Memory-Bandwidth Limitation}
+The comparison of cache misses suggests that, as the number of worker
+threads grows, the performance of the low-space algorithm becomes
+bottlenecked by memory bandwidth. To evaluate whether this is the
+case, we measure for each $t \in \{1, \ldots, 18\}$ the memory
+throughput of $t$ threads attempting to scan through disjoint portions
+of a large array in parallel. We measure two types of bandwidth, the
+\defn{read-bandwidth}, in which the threads are simply trying to read
+from the array, and the \defn{read/write bandwidth}, in which the
+threads are attempting to immediately overwrite entries to the array
+after reading them. Given read-bandwidth $r$ bytes/second and
+read/write bandwidth $w$ bytes/second, the time needed for the
+low-space algorithm to perform its memory operations on an input of
+$m$ bytes will be roughly $3.5 m / w + .5m / r$ seconds. We call this
+the \defn{bandwidth constraint}. Assuming that large scans through
+arrays are unaided by caching, the runtime of the low-space
+implementation is limited by the bandwidth
+constraint.\footnote{Empirically, the total number of cache misses is
+  within $8\%$ of what this assumption would predict,
+  suggesting that the bandwidth constraint is within a small amount of
+  the true bandwidth-limited runtime.}
+
+Figure \ref{tablebandwidth} compares the time taken by the low-space
+algorithm to the bandwidth constraint as the number of threads $t$
+varies from $1$ to $18$. As the number of threads grows, the algorithm
+becomes bandwidth limited, achieving its best possible parallel
+performance on the machine. The algorithm scales particularly well on
+the first socket of the machine, achieving a speedup on nine cores of
+roughly six times better than its performance on a single core, and
+then scales more poorly on the second socket as it becomes
+bottlenecked by memory bandwidth.
+
+\paragraph{A Full Quicksort}
+In Figure \ref{tablesort}, we graph the performance of a parallel
+quicksort implementation using our low-space algorithm. We compare the
+algorithm's performance to GNU Libc quicksort with varying numbers of
+worker threads and input sizes; the input array is initially in a
+random permutation.
+
+Our parallel quicksort uses the parallel-partition algorithm at the
+top levels of recursion, and then swaps to the serial-partitioning
+algorithm once the input size has been reduced by at least a factor of
+$8p$, where $p$ is the number of worker threads. By using the
+serial-partitioning algorithm on the small recursive subproblems we
+avoid the overhead of the parallel algorithm, while still achieving
+parallelism between subproblems. Small recursive problems also exhibit
+better cache behavior than larger ones, reducing the effects of
+memory-bandwidth limitations on the performance of the parallel
+quicksort, and improving the scaling.
+
+
+\paragraph{Implementation Details}
+In each implementation, the parallelism is achieved through simple
+parallel-for-loops, with one exception at the beginning of the
+low-space implementation, when the number of predecessors in the input
+array is computed. Although CilkPlus Reducers (or OpenMP Reductions)
+could be used to perform this parallel summation within a
+parallel-for-loop \cite{FrigoLe09}, we found a slightly more ad-hoc
+approach to be faster: Using a simple recursive structure, we manually
+implemented a parallel-for-loop with Cilk Spawns and Syncs, allowing
+for the summation to be performed within the recursion; to amortize
+the cost of Cilk thread spawns.
+
+\subsection{An In-Place Algorithm with Polynomial Span}\label{subsechighspan}
+
+In this subsection, we consider a simple in-place parallel-partition
+algorithm with polynomial span. We evaluate the algorithm as a simple
+and even-lower-overhead alternative to the low-space algorithm in the
+previous subsection.
+
+The algorithm takes two steps:
+\begin{itemize}
+\item \textbf{Step 1:} The algorithm breaks the input array $A$ into
+  $t$ equal-sized parts, $P_1, \ldots, P_t$, for some parameter $t$. A
+  serial partition is performed on each of the $P_i$'s in
+  parallel. This step takes work $\Theta(n)$ and span $\Theta(n / t)$.
+\item \textbf{Step 2:} The algorithm loops in serial through each of
+  the $t$ parts $P_1, \ldots, P_t$. Upon visiting $P_i$, the algorithm
+  has already performed a complete partition on the subarray $P_1
+  \circ \cdots \circ P_{t - 1}$. Let $j$ denote the number of
+  predecessors in $P_1, \ldots, P_{t - 1}$, and $k$ denote the number
+  of predecessors in $P_t$. The algorithm computes $k$ through a
+  simple binary search in $P_t$. The algorithm then moves the $k$
+  elements at the start of $P_t$ to take the place of the $k$ elements
+  $A[j + 1], \ldots, A[j + k]$. If the two sets of $k$ elements are
+  disjoint, then they are swapped with one-another in a
+  parallel-for-loop; otherwise, the non-overlapping portions of the
+  two sets of $k$ elements are swapped in parallel, while the
+  overlapping portion is left untouched. This completes the
+  partitioning of the parts $P_1 \circ \cdots \circ P_t$. This step
+  requires work $O(t \log n + n)$ and span $\Theta(t \log n)$.
+\end{itemize}
+
+Setting $t = \sqrt{n}$, the algorithm runs in linear time with span
+$\sqrt{n} \log n$; refining $t$ to an optimal value of $\sqrt{n / \log
+  n}$ results a span of $\sqrt{n \log n}$. In practice,
+however, this leaves too little parallelism in the parallel-for-loops
+in Step 2, resulting in poor scaling.\footnote{On 18 threads an on an
+  input of size $2^{28}$, for example, setting $t = \sqrt{n}$ results
+  in a performance a factor of two slower than the low-space
+  implementation, and setting $t = \sqrt{n / \log n}$ makes only
+  partial progress towards closing that gap.} To mitigate this, we
+tune our implementation of the algorithm to the number of processors
+$p$ on which it is being run, setting $t = 8 \cdot p$, in order to
+maximize the parallelism in the for-loops in Step 2, while still
+providing sufficient parallelism for Step 1.
+
+Figures \ref{tablecilk} and \ref{tablecilk2} compare the parallel
+performance of the algorithm, which is referred to as the
+\defn{two-layer algorithm}, to its lower-span peers. On 18 cores and
+on an input of size $2^{28}$, the two-layer algorithm offers a speedup of
+roughly 50\% over the low-space algorithm. The algorithm is more
+sensitive to input-size and number of cores, however, requiring a
+large enough ratio between the two to compensate for the algorithm's
+large span (See Figure \ref{tablecilk2}).
+
+Figure \ref{tableserial} compares the performance of the two-layer
+algorithm in serial to GNU Libc quicksort. The algorithm runs within a
+small fraction (less than $1/4$) of the serial implementation.
+
+Figure \ref{tablebandwidth} evaluates the degree to which the
+algorithm is memory-bandwidth bound on an input of size $2^{28}$. If
+the read/write bandwidth of the algorithm is $w$ bytes/second, then
+the bandwidth constraint for the algorithm on an input of $m$ bytes is
+given by $2m / w$. In particular, Step 1 of the algorithm makes one
+scan through the array, requiring time $m / w$; and then Step 2
+rearranges the predecessors (which constitute half of the array and
+each must be moved to a new location), requiring additional time $m /
+w$. Figure \ref{tablebandwidth} compares the time taken by the
+algorithm to the bandwidth constraint as the number of threads $t$
+varies from $1$ to $18$. Like the low-space algorithm, as the number
+of threads grows, the algorithm becomes close to bandwidth limited.
+
+Figure \ref{tablesort} compares the performance of a quicksort
+implementation using the two-layer partition algorithm, to the
+performance of an implementation using the low-space algorithm. The
+implementation using the two-layer algorithm achieves a modest speedup
+over the low-space algorithm, but also demonstrates its larger span by
+suffering on smaller inputs as the number of cores grows.
+
+\paragraph{Related Algorithms}
+Despite the simplicity of the two-layer algorithm, we are unaware of
+any discussion of the algorithm in prior work. A related algorithm is
+that of Francis and Pannan \cite{FrancisPa92}, which is the the only
+previously known algorithm of which we are aware that performs
+parallel-partition in-place using only exclusive-read-and-write memory
+memory. The algorithm, which we call the \defn{Strided Algorithm}
+consists of two steps: 
+\begin{itemize}
+\item Partition the array $A$ logically into $t$ equal-size parts, denoted by
+  $P_1, P_2, \ldots, P_t$ for some parameter $t$. Unlike the two-layer
+  algorithm, the parts are interleaved, with each $P_i$ consisting of
+  array entries $A[i], A[i + t], A[i + 2t], \ldots$. The first step of
+  the algorithm is to perform a serial partition on each of the
+  $P_i$'s, rearranging the elements within the $P_i$ so that the
+  predecessors come first. This step has work $\Theta(n)$ and span
+  $\Theta(n/t)$.
+\item For each $P_i$, define the \defn{splitting position} $v_i$ to be
+  the position in $A$ of the final predecessor in (the already
+  partitioned) $P_i$. Define $v_{\text{min}} = \min\{v_1, \ldots,
+  v_t\}$ and define $v_{\text{max}} = \max\{v_1, \ldots, v_t\}$. Then the
+  second step of the algorithm is to perform a serial partition on the
+  sub-array $A[v_{\text{min}} : v_{\text{max}}]$. This completes the
+    full partition.
+\end{itemize}
+
+Note that Step 2 of the Strided Algorithm has no parallelism, with
+span $\Theta(v_{\text{max}} - v_{\text{min}})$. In general, this
+results in an algorithm with linear-span (i.e., no parallelism
+guarantee). When the number of predecessors in each of the $P_i$'s is
+close to equal, however, the quantity $v_{\text{max}} -
+v_{\text{min}}$ can be much smaller. For example, if $A$ is randomly
+ordered, then one can use Chernoff bounds to prove that with high
+probability $v_{\text{max}} - v_{\text{min}} \le O(\sqrt{n \cdot t}
+\cdot \log n)$. For this special case, setting $t = n^{1/4}$ results
+in a span of $\tilde{O}(n^{3/4})$.
+
+A more cache-friendly version of the algorithm, in which each part
+$P_i$ consists blocks of $b$ elements separated from each other by
+runs of length $(t - 1) b$ was considered by Frias and Petit
+\cite{Frias08}. With this optimization, one advantage of the Strided
+Algorithm is that when $v_{\text{max}} - v_{\text{min}}$ is small, the
+total number of cache misses by the algorithm is close to the same as
+for a single scan through the data. Designing a low-span version of
+the Strided Algorithm that offers good parallelism on all inputs
+(rather than only in the randomized case) is therefore an interesting
+direction of future work.
+
+
 
 \section{Conclusion and Open Questions}
 
@@ -710,14 +1010,16 @@ Parallel partition is a fundamental primitive in parallel algorithms
 implementations, even by constant factors, is therefore of high
 practical importance. Until now, the only space-efficient algorithms
 for parallel partition have relied extensively on concurrency
-mechanisms or atomic operations. In this paper, we have shown that,
-somewhat surprisingly, there exists a simple variant on the classic
-parallel algorithm that completely eliminates the use of auxiliary
-memory, while still using only exclusive read/write shared
-variables. Moreover, our implementation of (a variant of) the
-algorithm is able to exploit the algorithm's superior cache-behavior
-in order to obtain practical speedups over its out-of-place
-counterpart.
+mechanisms or atomic operations (or lacked performance guarantees). In
+this paper, we have shown that, somewhat surprisingly, there exists a
+simple variant on the classic parallel algorithm that completely
+eliminates the use of auxiliary memory, while still using only
+exclusive read/write shared variables, and maintaining a
+polylogarithmic span. Moreover, our implementation is able to exploit
+the algorithm's superior cache-behavior in order to obtain practical
+speedups over its out-of-place counterpart. We have also presented an
+even simpler alternative, the two-layer algorithm, which has a larger
+polynomial span, but which can be tuned to perform well in practice.
 
 Our work prompts several theoretical questions. Can fast
 space-efficient algorithms with polylogarithmic span be found for
@@ -728,9 +1030,25 @@ Such algorithms are of both theoretical and practical interest, and
 might be able to utilize some of the techniques introduced in this
 paper.
 
+Another important direction of work is the design of in-place parallel
+algorithms for sample-sort, the variant of quicksort in which multiple
+pivots are used simultaneously in each partition. Sample-sort can be
+implemented to exhibit fewer cache misses than quicksort, which is be
+especially important when the computation is memory-bandwidth
+bound. The known in-place parallel algorithms for sample-sort rely
+heavily on atomic instructions \cite{AxtmannWi17} (even requiring
+128-bit compare-and-swap instructions). Finding fast algorithms that
+use only exclusive-read-write memory (or
+concurrent-read-exclusive-write memory) is an important direction of
+future work.
+
+
 \paragraph{Acknowledgments} The author would like to thank Bradley C. Kuszmaul for several suggestions that helped simplify both the algorithm and its exposition. The author would also like to thank Reza Zadeh for encouragement and advice.
 
-\bibliographystyle{plain}
+This research was supported in part by NSF Grants 1314547 and 1533644.
+
+
+\bibliographystyle{ACM-Reference-Format}
 \bibliography{paper}
 
 \end{document}

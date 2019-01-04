@@ -1,4 +1,11 @@
-
+@inproceedings{FrigoLe09,
+  title={Reducers and other Cilk++ hyperobjects},
+  author={Frigo, Matteo and Halpern, Pablo and Leiserson, Charles E and Lewin-Berlin, Stephen},
+  booktitle={Proceedings of the twenty-first annual symposium on Parallelism in algorithms and architectures},
+  pages={79--90},
+  year={2009},
+  organization={ACM}
+}
 
 %% Here, parallel partition is referred to as a filter operation
 @article{Blelloch96,
@@ -116,6 +123,17 @@
   year={2017}
 }
 
+@inproceedings{BlellochFi12,
+  title={Internally deterministic parallel algorithms can be fast},
+  author={Blelloch, Guy E and Fineman, Jeremy T and Gibbons, Phillip B and Shun, Julian},
+  booktitle={ACM SIGPLAN Notices},
+  volume={47},
+  number={8},
+  pages={181--192},
+  year={2012},
+  organization={ACM}
+}
+
 %% Practical work on parallel partition. Does not concern itself with having low-span algorithms. More focused on optimizing practical algorithms for number of comparisons, or something like that.
 @inproceedings{Frias08,
   title={Parallel partition revisited},
@@ -184,10 +202,17 @@
 @inproceedings{TsigasZh03,
   title={A simple, fast parallel implementation of quicksort and its performance evaluation on SUN enterprise 10000},
   author={Tsigas, Philippas and Zhang, Yi},
-  booktitle={null},
+  booktitle={Proceedings of the Eleventh Euromicro Conference on Parallel, Distributed and Network-Based Processing},
   pages={372},
   year={2003},
   organization={IEEE}
+}
+
+@article{Kleen05,
+  title={A numa api for linux},
+  author={Kleen, Andi},
+  journal={Novel Inc},
+  year={2005}
 }
 
 %% A Linear-span algorithm with a good engineering constant and that behaves well on random inputs; Even then I think it will have span at least sqrt(n).
@@ -205,7 +230,7 @@
 @inproceedings{Anderson90,
   title={Parallel algorithms for generating random permutations on a shared memory machine},
   author={Anderson, R\_},
-  booktitle={Proceedings of the second annual ACM symposium on Parallel algorithms and architectures},
+  booktitle={Proceedings of the second annual ACM Symposium on Parallel Algorithms and Architectures},
   pages={95--102},
   year={1990},
   organization={ACM}
