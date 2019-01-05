@@ -1,4 +1,4 @@
-/*
+/* 
  *  Sets parameters used in main.cc. Some of these, such as whether we
  *  wish to compile in serial versus parallel must be hardcoded via
  *  macros. The others could just be normal variables.
