@@ -987,9 +987,10 @@ guarantee). When the number of predecessors in each of the $P_i$'s is
 close to equal, however, the quantity $v_{\text{max}} -
 v_{\text{min}}$ can be much smaller. For example, if $A$ is randomly
 ordered, then one can use Chernoff bounds to prove that with high
-probability $v_{\text{max}} - v_{\text{min}} \le O(\sqrt{n \cdot t}
-\cdot \log n)$. For this special case, setting $t = n^{1/4}$ results
-in a span of $\tilde{O}(n^{3/4})$.
+probability $v_{\text{max}} - v_{\text{min}} \le O(\sqrt{n \cdot t
+  \cdot \log n})$. The full span of the algorithm is then
+$\tilde{O}(n/t + \sqrt{n \cdot t})$, which optimizes at $t = n^{1/3}$
+to $\tilde{O}(n^{2/3})$.
 
 A more cache-friendly version of the algorithm, in which each part
 $P_i$ consists blocks of $b$ elements separated from each other by
