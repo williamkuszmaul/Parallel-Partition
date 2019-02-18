@@ -892,18 +892,19 @@ The algorithm takes two steps:
 \item \textbf{Step 2:} The algorithm loops in serial through each of
   the $t$ parts $P_1, \ldots, P_t$. Upon visiting $P_i$, the algorithm
   has already performed a complete partition on the subarray $P_1
-  \circ \cdots \circ P_{t - 1}$. Let $j$ denote the number of
-  predecessors in $P_1, \ldots, P_{t - 1}$, and $k$ denote the number
-  of predecessors in $P_t$. The algorithm computes $k$ through a
-  simple binary search in $P_t$. The algorithm then moves the $k$
-  elements at the start of $P_t$ to take the place of the $k$ elements
+  \circ \cdots \circ P_{i - 1}$. Let $j$ denote the number of
+  predecessors in $P_1, \ldots, P_{i - 1}$, and $k$ denote the number
+  of predecessors in $P_i$. The algorithm computes $k$ through a
+  simple binary search in $P_i$. The algorithm then moves the $k$
+  elements at the start of $P_i$ to take the place of the $k$ elements
   $A[j + 1], \ldots, A[j + k]$. If the two sets of $k$ elements are
   disjoint, then they are swapped with one-another in a
   parallel-for-loop; otherwise, the non-overlapping portions of the
   two sets of $k$ elements are swapped in parallel, while the
   overlapping portion is left untouched. This completes the
-  partitioning of the parts $P_1 \circ \cdots \circ P_t$. This step
-  requires work $O(t \log n + n)$ and span $\Theta(t \log n)$.
+  partitioning of the parts $P_1 \circ \cdots \circ P_i$. Performing
+  this step for $i = 1, \ldots, t$ requires work $O(t \log n + n)$ and
+  span $\Theta(t \log n)$.
 \end{itemize}
 
 Setting $t = \sqrt{n}$, the algorithm runs in linear time with span
