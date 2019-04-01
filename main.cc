@@ -654,7 +654,7 @@ int main() {
 #ifdef USE_CILK
   parallel_partition_tests(); // Run the parallel tests!
   parallel_partition_tests_two(); // Run the parallel tests!
-  parallel_sort_tests(); 
+  parallel_sort_tests();     
   bandwidth_bound_tests();
 #endif
 #ifdef RUN_SERIAL
